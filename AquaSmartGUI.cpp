@@ -264,7 +264,7 @@ void AquaSmartGUI::draw_water_level(int level, int current_index, int total_elem
 
     char water_level[10];
     sprintf(water_level,"level: %d cm", level);
-    u8g.drawStr(0, MIDDLE_TEXT_POS, water_level);
+    u8g.drawStr(0, BOTTOM_TEXT_POS, water_level);
     u8g.drawXBMP(115, 15, BOTTOM_RIGHT_ICON_SIZE, BOTTOM_RIGHT_ICON_SIZE, water_level1);
   } while( u8g.nextPage());
 }
@@ -285,9 +285,9 @@ void AquaSmartGUI::draw_light(boolean light_is_on, int current_index, int total_
     u8g.setFont(u8g_font_8x13B);
     u8g.setFontPosTop();
     if (light_is_on) {
-      u8g.drawStr(0, MIDDLE_TEXT_POS, "light: ON");
+      u8g.drawStr(0, BOTTOM_TEXT_POS, "light: ON");
     } else {
-      u8g.drawStr(0, MIDDLE_TEXT_POS, "light: OFF");
+      u8g.drawStr(0, BOTTOM_TEXT_POS, "light: OFF");
     }
   } while( u8g.nextPage());
 }
