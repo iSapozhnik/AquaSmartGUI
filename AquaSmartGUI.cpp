@@ -126,15 +126,11 @@ const uint8_t fan_on3[] PROGMEM = {
   0xE0, 0x00,
 };
 
-AquaSmartGUI::AquaSmartGUI()
-{
+int fan = 0;
+
+AquaSmartGUI::AquaSmartGUI() {
   u8g.setRot180();
   progress = 0;
-}
-
-void AquaSmartGUI::draw_logo()
-{
-
 }
 
 void display_logo() {
@@ -205,7 +201,8 @@ void draw_top_menu(int current_index, int total_elements) {
   }
 }
 
-void AquaSmartGUI::draw_temperature(boolean fanIsOn, float temp, boolean temp_is_growing, int fan, int current_index, int total_elements) {
+void AquaSmartGUI::draw_temperature(boolean fanIsOn, float temp, boolean temp_is_growing, int current_index, int total_elements) {
+  update_fan();
   u8g.firstPage();
   do {
     draw_top_menu(current_index, total_elements);
@@ -293,4 +290,12 @@ void AquaSmartGUI::draw_light(boolean light_is_on, int current_index, int total_
       u8g.drawStr(0, MIDDLE_TEXT_POS, "light: OFF");
     }
   } while( u8g.nextPage());
+}
+
+// Private
+void AquaSmartGUI::update_fan() {
+  fan++;
+  if (fan == 4) {
+    fan = 0;
+  }
 }
