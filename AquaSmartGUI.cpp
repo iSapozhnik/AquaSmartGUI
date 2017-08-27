@@ -1,6 +1,15 @@
 #include "Arduino.h"
 #include "AquaSmartGUI.h"
 #include "U8glib.h"
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define OLED_RESET LED_BUILTIN  //4
+Adafruit_SSD1306 display(OLED_RESET);
+
+#if (SSD1306_LCDHEIGHT != 32)
+#error("Height incorrect, please fix Adafruit_SSD1306.h!");
+#endif
 
 U8GLIB_SSD1306_128X32 u8g(U8G_I2C_OPT_NONE);
 
@@ -38,6 +47,20 @@ const uint8_t menu_temp[] PROGMEM = {
   0x61, 0x8C, 0x00, 0xA0, 0xC1, 0x87, 0x00, 0xA8, 0x01, 0x00, 0x01, 0xB4,
   0x01, 0x00, 0x06, 0xA3, 0x01, 0x00, 0xF8, 0x83, 0x01, 0x00, 0x80, 0x87,
   0x01, 0x00, 0x00, 0x8F, 0x03, 0x00, 0x00, 0xC0, 0x02, 0x00, 0x00, 0x40,
+  0x0C, 0x00, 0x00, 0x30, 0xF0, 0xFF, 0xFF, 0x0F, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+
+const uint8_t menu_aeration[] PROGMEM = {
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x01, 0x00, 0x00, 0x80, 0x01, 0x00, 0x00, 0x80, 0x01, 0x00, 0x00, 0x80,
+  0x01, 0x00, 0x00, 0x80, 0xFF, 0xFF, 0xFF, 0xFF, 0x01, 0x00, 0x00, 0x80,
+  0x01, 0x00, 0x70, 0x80, 0x01, 0x00, 0x88, 0x80, 0x01, 0x00, 0x88, 0x80,
+  0x01, 0x00, 0x88, 0x80, 0x01, 0x00, 0x70, 0x80, 0x01, 0x00, 0x00, 0x80,
+  0xE1, 0x03, 0x00, 0x8C, 0xC1, 0x07, 0x00, 0x92, 0x81, 0x1F, 0x00, 0x92,
+  0xC5, 0x30, 0x00, 0x8C, 0x2D, 0x58, 0x00, 0x80, 0x15, 0x98, 0x00, 0x80,
+  0x05, 0x80, 0x00, 0x80, 0x15, 0x80, 0x80, 0x81, 0x2D, 0x40, 0x80, 0x81,
+  0xC5, 0x30, 0x00, 0x80, 0x81, 0x1F, 0x00, 0x80, 0x02, 0x00, 0x00, 0x42,
   0x0C, 0x00, 0x00, 0x30, 0xF0, 0xFF, 0xFF, 0x0F, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
@@ -96,6 +119,12 @@ const uint8_t light_off[] PROGMEM = {
   0xE0, 0x00,
 };
 
+const uint8_t aeration[] PROGMEM = {
+    0xC0, 0x03, 0x60, 0x07, 0x30, 0x0F, 0x90, 0x0F, 0xF0, 0x0F, 0xF0, 0x0F,
+    0xE0, 0x07, 0xC0, 0x03, 0x1C, 0x00, 0x36, 0x00, 0x3A, 0x00, 0x3E, 0x00,
+    0x1C, 0x00,
+};
+
 const uint8_t fan_off[] PROGMEM = {
   0xE0, 0x00, 0x10, 0x01, 0x10, 0x01, 0xA0, 0x00, 0xE6, 0x0C, 0x59, 0x13,
   0xB1, 0x11, 0x59, 0x13, 0xE6, 0x0C, 0xA0, 0x00, 0x10, 0x01, 0x10, 0x01,
@@ -129,6 +158,10 @@ const uint8_t fan_on3[] PROGMEM = {
 int fan = 0;
 
 AquaSmartGUI::AquaSmartGUI() {
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+  display.display();
+
   u8g.setRot180();
   progress = 0;
 }
@@ -138,9 +171,12 @@ void display_logo() {
 }
 
 void display_text() {
-  u8g.setFont(u8g_font_8x13B);
-  u8g.setPrintPos(0, 10);
-  u8g.println("AquaSmart");
+  // u8g.setFont(u8g_font_8x13B);
+  // u8g.setPrintPos(0, 10);
+  // u8g.println("AquaSmart");
+  display.setCursor(0,10);
+  display.println("AquaSmart");
+  display.display();
 
   u8g.setFont(u8g_font_04b_03);
   u8g.setFontPosTop();
@@ -175,8 +211,10 @@ void AquaSmartGUI::draw_menu_item(int item_index, char *item_name) {
     icon = menu_temp;
   } else if (item_index == 1) {
     icon = menu_level;
-  } else {
+  } else if (item_index == 2){
     icon = menu_light;
+  } else {
+    icon = menu_aeration;
   }
 
   u8g.firstPage();
@@ -201,7 +239,7 @@ void draw_top_menu(int current_index, int total_elements) {
   }
 }
 
-void AquaSmartGUI::draw_temperature(boolean fanIsOn, float temp, boolean temp_is_growing, int current_index, int total_elements) {
+void AquaSmartGUI::draw_temperature(boolean fanIsOn, int fan_mode, float temp, boolean temp_is_growing, int current_index, int total_elements) {
   update_fan();
   u8g.firstPage();
   do {
@@ -213,7 +251,7 @@ void AquaSmartGUI::draw_temperature(boolean fanIsOn, float temp, boolean temp_is
     char temperature[10];
     char str_temp[6];
     dtostrf(temp, 4, 1, str_temp);
-    sprintf(temperature,"temp: %s\xB0""C", str_temp);
+    sprintf(temperature,"t:%s\xB0""C", str_temp);
     // sprintf(temperature,"%s F", str_temp);
 
     // float temp = 10.55;
@@ -232,6 +270,9 @@ void AquaSmartGUI::draw_temperature(boolean fanIsOn, float temp, boolean temp_is
     u8g.setFont(u8g_font_8x13B);
     u8g.setFontPosTop();
 
+    char fan_mode_status[10];
+    String result = "fan: ";
+
     if (fanIsOn) {
       const uint8_t *bitmap = fan_on0;
       if (fan == 0) {
@@ -245,13 +286,25 @@ void AquaSmartGUI::draw_temperature(boolean fanIsOn, float temp, boolean temp_is
       } else {
         bitmap = fan_on0;
       }
-
-      u8g.drawStr(0, BOTTOM_TEXT_POS, "fan: ON");
+      result = result + "ON";
+      // strcpy(fan_mode_status, "ON");
+      // u8g.drawStr(0, BOTTOM_TEXT_POS, "fan: ON");
       u8g.drawXBMP(115, 15, BOTTOM_RIGHT_ICON_SIZE, BOTTOM_RIGHT_ICON_SIZE, bitmap);
     } else {
-      u8g.drawStr(0, BOTTOM_TEXT_POS, "fan: OFF");
+      // u8g.drawStr(0, BOTTOM_TEXT_POS, "fan: OFF");
+      result = result + "OFF";
+      // strcpy(fan_mode_status, "OFF");
       u8g.drawXBMP(115, 15, BOTTOM_RIGHT_ICON_SIZE, BOTTOM_RIGHT_ICON_SIZE, fan_off);
     }
+
+    if (fan_mode == 1 || fan_mode == 2) {
+      result = result + "(M)";
+    } else {
+      result = result + "(A)";
+    }
+    result.toCharArray(fan_mode_status, 50);
+    u8g.drawStr(0, BOTTOM_TEXT_POS, fan_mode_status);
+
   } while( u8g.nextPage());
 }
 
@@ -288,6 +341,22 @@ void AquaSmartGUI::draw_light(boolean light_is_on, int current_index, int total_
       u8g.drawStr(0, BOTTOM_TEXT_POS, "light: ON");
     } else {
       u8g.drawStr(0, BOTTOM_TEXT_POS, "light: OFF");
+    }
+  } while( u8g.nextPage());
+}
+
+void AquaSmartGUI::draw_aeration(boolean aeration_on, int current_index, int total_elements) {
+  u8g.firstPage();
+  do {
+    draw_top_menu(current_index, total_elements);
+    u8g.drawXBMP(115, 15, BOTTOM_RIGHT_ICON_SIZE, BOTTOM_RIGHT_ICON_SIZE, aeration);
+
+    u8g.setFont(u8g_font_8x13B);
+    u8g.setFontPosTop();
+    if (aeration_on) {
+      u8g.drawStr(0, BOTTOM_TEXT_POS, "aeration: ON");
+    } else {
+      u8g.drawStr(0, BOTTOM_TEXT_POS, "aeration: OFF");
     }
   } while( u8g.nextPage());
 }
