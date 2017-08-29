@@ -7,7 +7,9 @@ class AquaSmartGUI
 {
   public:
     AquaSmartGUI();
+    void setup();
     void draw_logo();
+    void draw_something();
     void draw_start(boolean& finish);
     void draw_temperature(boolean fanIsOn, int fan_mode, float temp, boolean temp_is_growing, int current_index, int total_elements);
     void draw_water_level(int level, int current_index, int total_elements);
