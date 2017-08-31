@@ -15,7 +15,7 @@ class AquaSmartGUI
     void draw_water_level(int level, int current_index, int total_elements);
     void draw_light(boolean light_is_on, int current_index, int total_elements);
     void draw_aeration(boolean aeration_on, int current_index, int total_elements);
-    void draw_menu_item(int item_index, char *item_name); // Menu item preview
+    void draw_menu_item(int item_index, const char *item_name); // Menu item preview
   private:
   	int progress;
     void update_fan();
