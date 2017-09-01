@@ -125,20 +125,20 @@ void AquaSmartGUI::draw_temperature(boolean fanIsOn, int fan_mode, float temp, b
   // display.display();
   draw_top_menu(current_index, total_elements);
 
-  // u8g.setFont(u8g_font_8x13B);
-  // u8g.setFontPosTop();
   // https://stackoverflow.com/questions/27651012/arduino-sprintf-float-not-formatting
   char temperature[10];
   char str_temp[6];
   dtostrf(temp, 4, 1, str_temp);
-  sprintf(temperature,"T:%s\xB0""C", str_temp);
+  sprintf(temperature,"T:%s", str_temp);
   // sprintf(temperature,"%s F", str_temp);
 
   // float temp = 10.55;
   // sprintf (buf, "temp: %f C", t);
   // u8g.drawStr(0, 3, F("temp: 22.6\xB0""C"));
   display.setCursor(0, TOP_TEXT_POS);
-  display.println(temperature);
+  display.print(temperature);
+  display.print(char(247));
+  display.print("C");
 
   const uint8_t *arrow_bitmap = up;
   if (temp_is_growing) {
