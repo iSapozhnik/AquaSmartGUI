@@ -23,7 +23,8 @@ Adafruit_SSD1306 display(OLED_RESET);
 #define BOTTOM_RIGHT_ICON_WIDTH     16
 #define BOTTOM_RIGHT_ICON_HEIGHT    13
 
-int fan = 0;
+uint8_t fan = 0;
+uint8_t wifi = 0;
 
 AquaSmartGUI::AquaSmartGUI() {
   // u8g.setRot180();
@@ -66,7 +67,7 @@ void display_text() {
 
 void display_progress(int value) {
   display.drawRoundRect(0, 18, 58, 9, 3, 1);
-  display.drawRect(3, 21, value, 3, 1);
+  display.fillRect(3, 21, value, 3, 1);
   display.display();
   // u8g.drawRFrame(0,18,72,9,3);
   // u8g.drawBox(3,21,value,3);
@@ -75,13 +76,28 @@ void display_progress(int value) {
 void AquaSmartGUI::draw_start(boolean& finish) {
   display_text();
   display_logo();
-  if (progress <= 52) {
+  if (progress <= 51) {
     progress = progress + 1;
     display_progress(progress);
   } else {
-    display_progress(52);
-    finish = true;
+    display_progress(51);
+    // finish = true;
   }
+}
+
+void AquaSmartGUI::draw_loading() {
+  display_text();
+  display_logo();
+  if (progress <= 51) {
+    progress = progress + 3;
+    display_progress(progress);
+  } else {
+    display_progress(51);
+  }
+}
+
+void AquaSmartGUI::draw_end_loading() {
+  display_progress(51);
 }
 
 // Preview screen with the name and icon
@@ -95,8 +111,10 @@ void AquaSmartGUI::draw_menu_item(int item_index, const char *item_name) {
     icon = menu_light;
   } else if (item_index == 3) {
     icon = menu_aeration;
-  } else {
+  } else if (item_index == 4) {
     icon = out_menu_temp;
+  } else {
+    icon = menu_settings;
   }
 
   display.clearDisplay();
@@ -233,10 +251,46 @@ void AquaSmartGUI::draw_aeration(boolean aeration_on, int current_index, int tot
   display.display();
 }
 
+void AquaSmartGUI::draw_settings(String address, int current_index, int total_elements) {
+  update_wifi();
+  display.clearDisplay();
+
+  draw_top_menu(current_index, total_elements);
+
+  String result = "IP: ";
+  result.concat(address);
+
+  const uint8_t *bitmap = wifi0;
+  if (wifi == 0) {
+    bitmap = wifi0;
+  } else if (wifi == 1) {
+    bitmap = wifi1;
+  } else if (wifi == 2) {
+    bitmap = wifi2;
+  } else if (wifi == 3) {
+    bitmap = wifi3;
+  } else {
+    bitmap = wifi0;
+  }
+
+  display.drawBitmap(115, 15, bitmap, BOTTOM_RIGHT_ICON_WIDTH, BOTTOM_RIGHT_ICON_HEIGHT, 1);
+
+  display.setCursor(0, BOTTOM_TEXT_POS);
+  display.println(result);
+  display.display();
+}
+
 // Private
 void AquaSmartGUI::update_fan() {
   fan++;
   if (fan == 4) {
     fan = 0;
+  }
+}
+
+void AquaSmartGUI::update_wifi() {
+  wifi++;
+  if (wifi == 4) {
+    wifi = 0;
   }
 }
