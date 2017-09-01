@@ -280,6 +280,24 @@ void AquaSmartGUI::draw_settings(String address, int current_index, int total_el
   display.display();
 }
 
+void AquaSmartGUI::draw_out_temperature(float temp, int current_index, int total_elements) {
+  display.clearDisplay();
+  draw_top_menu(current_index, total_elements);
+
+  display.drawBitmap(115, 15, out_temp, BOTTOM_RIGHT_ICON_WIDTH, BOTTOM_RIGHT_ICON_HEIGHT, 1);
+
+  display.setCursor(0, BOTTOM_TEXT_POS);
+  char temperature[10];
+  char str_temp[6];
+  dtostrf(temp, 4, 1, str_temp);
+  sprintf(temperature,"T:%s", str_temp);
+
+  display.print(temperature);
+  display.print(char(247));
+  display.print("C");
+  display.display();
+}
+
 // Private
 void AquaSmartGUI::update_fan() {
   fan++;

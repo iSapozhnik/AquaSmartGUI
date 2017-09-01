@@ -14,6 +14,7 @@ class AquaSmartGUI
     void draw_loading();
     void draw_end_loading();
     void draw_temperature(boolean fanIsOn, int fan_mode, float temp, boolean temp_is_growing, int current_index, int total_elements);
+    void draw_out_temperature(float temp, int current_index, int total_elements);
     void draw_water_level(int level, int current_index, int total_elements);
     void draw_light(boolean light_is_on, int current_index, int total_elements);
     void draw_aeration(boolean aeration_on, int current_index, int total_elements);
