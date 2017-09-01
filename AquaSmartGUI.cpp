@@ -15,12 +15,13 @@ Adafruit_SSD1306 display(OLED_RESET);
 
 // U8GLIB_SSD1306_128X32 u8g(U8G_I2C_OPT_NONE);
 
-#define SCREEN_WIDTH            128
-#define MENU_SIZE               32
-#define TOP_TEXT_POS            6
-#define MIDDLE_TEXT_POS         10
-#define BOTTOM_TEXT_POS         19
-#define BOTTOM_RIGHT_ICON_SIZE  32
+#define SCREEN_WIDTH                128
+#define MENU_SIZE                   32
+#define TOP_TEXT_POS                6
+#define MIDDLE_TEXT_POS             10
+#define BOTTOM_TEXT_POS             19
+#define BOTTOM_RIGHT_ICON_WIDTH     16
+#define BOTTOM_RIGHT_ICON_HEIGHT    13
 
 int fan = 0;
 
@@ -145,7 +146,7 @@ void AquaSmartGUI::draw_temperature(boolean fanIsOn, int fan_mode, float temp, b
   } else {
     arrow_bitmap = down;
   }
-  display.drawBitmap(118, 7, arrow_bitmap, 32, 32, 1);
+  display.drawBitmap(118, 7, arrow_bitmap, 8, 4, 1);
 
   char fan_mode_status[10];
   String result = "FAN: ";
@@ -165,10 +166,10 @@ void AquaSmartGUI::draw_temperature(boolean fanIsOn, int fan_mode, float temp, b
     }
     result = result + "ON";
 
-    display.drawBitmap(115, 15, bitmap, BOTTOM_RIGHT_ICON_SIZE, BOTTOM_RIGHT_ICON_SIZE, 1);
+    display.drawBitmap(115, 15, bitmap, BOTTOM_RIGHT_ICON_WIDTH, BOTTOM_RIGHT_ICON_HEIGHT, 1);
   } else {
     result = result + "OFF";
-    display.drawBitmap(115, 15, fan_off, BOTTOM_RIGHT_ICON_SIZE, BOTTOM_RIGHT_ICON_SIZE, 1);
+    display.drawBitmap(115, 15, fan_off, BOTTOM_RIGHT_ICON_WIDTH, BOTTOM_RIGHT_ICON_HEIGHT, 1);
   }
   // display.display();
 
@@ -191,7 +192,7 @@ void AquaSmartGUI::draw_water_level(int level, int current_index, int total_elem
   char water_level[10];
   sprintf(water_level,"LEVEL: %d CM", level);
   display.print(water_level);
-  display.drawBitmap(115, 15, water_level1, BOTTOM_RIGHT_ICON_SIZE, BOTTOM_RIGHT_ICON_SIZE, 1);
+  display.drawBitmap(115, 15, water_level1, BOTTOM_RIGHT_ICON_WIDTH, BOTTOM_RIGHT_ICON_HEIGHT, 1);
   display.display();
 
 }
@@ -206,7 +207,7 @@ void AquaSmartGUI::draw_light(boolean light_is_on, int current_index, int total_
   } else {
     light_bitmap = light_off;
   }
-  display.drawBitmap(115, 15, light_bitmap, BOTTOM_RIGHT_ICON_SIZE, BOTTOM_RIGHT_ICON_SIZE, 1);
+  display.drawBitmap(115, 15, light_bitmap, BOTTOM_RIGHT_ICON_WIDTH, BOTTOM_RIGHT_ICON_HEIGHT, 1);
 
   display.setCursor(0, BOTTOM_TEXT_POS);
   if (light_is_on) {
@@ -221,7 +222,7 @@ void AquaSmartGUI::draw_aeration(boolean aeration_on, int current_index, int tot
   display.clearDisplay();
   draw_top_menu(current_index, total_elements);
 
-  display.drawBitmap(115, 15, aeration, BOTTOM_RIGHT_ICON_SIZE, BOTTOM_RIGHT_ICON_SIZE, 1);
+  display.drawBitmap(115, 15, aeration, BOTTOM_RIGHT_ICON_WIDTH, BOTTOM_RIGHT_ICON_HEIGHT, 1);
 
   display.setCursor(0, BOTTOM_TEXT_POS);
   if (aeration_on) {
