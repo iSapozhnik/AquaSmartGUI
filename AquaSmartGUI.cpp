@@ -33,7 +33,7 @@ AquaSmartGUI::AquaSmartGUI() {
 
 void AquaSmartGUI::setup() {
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  display.setRotation(2);
+  // display.setRotation(2);
   // display.setTextSize(1);
   display.setTextColor(WHITE);
   display.clearDisplay();
@@ -280,21 +280,35 @@ void AquaSmartGUI::draw_settings(String address, int current_index, int total_el
   display.display();
 }
 
-void AquaSmartGUI::draw_out_temperature(float temp, int current_index, int total_elements) {
+void AquaSmartGUI::draw_out_temperature(float temp, boolean temp_is_growing, float humidity, int current_index, int total_elements) {
   display.clearDisplay();
   draw_top_menu(current_index, total_elements);
 
+  const uint8_t *arrow_bitmap = down;
+  if (temp_is_growing) {
+    arrow_bitmap = up;
+  } else {
+    arrow_bitmap = down;
+  }
+  display.drawBitmap(118, 7, arrow_bitmap, 8, 4, 1);
   display.drawBitmap(115, 15, out_temp, BOTTOM_RIGHT_ICON_WIDTH, BOTTOM_RIGHT_ICON_HEIGHT, 1);
 
-  display.setCursor(0, BOTTOM_TEXT_POS);
+  display.setCursor(0, TOP_TEXT_POS);
   char temperature[10];
   char str_temp[6];
   dtostrf(temp, 4, 1, str_temp);
   sprintf(temperature,"T:%s", str_temp);
-
   display.print(temperature);
   display.print(char(247));
   display.print("C");
+
+  display.setCursor(0, BOTTOM_TEXT_POS);
+  // char humidity_char[10];
+  // sprintf(humidity_char,"H:%d \%", humidity);
+  // display.print(humidity_char);
+  display.print("H:");
+  display.print(humidity);
+  display.print("\%");
   display.display();
 }
 
